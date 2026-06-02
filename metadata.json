@@ -1,0 +1,6 @@
+{
+  "name": "都市防災導覽與學習平台",
+  "description": "提供台南總頭里與海佃里等地區的都市防災地圖區域導覽，並結合防災學習與歷程時間軸。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
