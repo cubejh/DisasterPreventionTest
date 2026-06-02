@@ -3,7 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { AreaInfo, MarkerInfo } from '../types';
 import { AREAS, MARKERS } from '../data';
-import { MapPin, Navigation, Info, Shield, Droplet, Phone, Users, CheckCircle2, ChevronRight, Compass, List } from 'lucide-react';
+import { Compass, List, Info, ChevronRight } from 'lucide-react';
 
 interface MapComponentProps {
   selectedArea: AreaInfo;
@@ -17,9 +17,8 @@ export default function MapComponent({ selectedArea, onAreaSelect }: MapComponen
   
   const [filterType, setFilterType] = useState<string>('all');
   const [showTips, setShowTips] = useState<boolean>(true);
-  const [hoveredMarker, setHoveredMarker] = useState<MarkerInfo | null>(null);
 
-  // SVG Custom Marker Generator (保持不變)
+  // SVG Custom Marker Generator
   const getMarkerHtml = (type: 'shelter' | 'danger' | 'general' | 'pumping', name: string) => {
     let colorBg = 'bg-blue-500';
     let pulseBg = 'bg-blue-400';
@@ -50,7 +49,7 @@ export default function MapComponent({ selectedArea, onAreaSelect }: MapComponen
       });
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+        attribution: '&copy; OpenStreetMap',
       }).addTo(map);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
       mapInstanceRef.current = map;
@@ -63,7 +62,7 @@ export default function MapComponent({ selectedArea, onAreaSelect }: MapComponen
     };
   }, []);
 
-  // Update center
+  // Update center when area changes
   useEffect(() => {
     if (mapInstanceRef.current) {
       mapInstanceRef.current.flyTo(
@@ -71,6 +70,8 @@ export default function MapComponent({ selectedArea, onAreaSelect }: MapComponen
         selectedArea.zoom,
         { animate: true, duration: 1.5 }
       );
+      // 在手機上切換區域時，確保地圖尺寸正確計算
+      setTimeout(() => mapInstanceRef.current?.invalidateSize(), 500);
     }
   }, [selectedArea]);
 
@@ -103,14 +104,56 @@ export default function MapComponent({ selectedArea, onAreaSelect }: MapComponen
         const leafMarker = markersRef.current[marker.id];
         if (leafMarker) leafMarker.openPopup();
       }, 1000);
+      // 手機點擊列表後，自動捲動回地圖位置
+      if (window.innerWidth < 1024) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full min-h-[650px] items-stretch">
+    <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 h-full min-h-screen lg:min-h-[650px] bg-stone-950 p-4 lg:p-0">
       
-      {/* 左側資訊與地標列表面板 (整合在一起) */}
-      <div className="col-span-1 lg:col-span-4 flex flex-col gap-4 overflow-hidden">
+      {/* 右側地圖主體 (在手機版顯示在最上方) */}
+      <div className="order-1 lg:order-2 lg:col-span-8 flex flex-col gap-3">
+        {/* 地標篩選欄 */}
+        <div className="bg-stone-900 border border-stone-800 rounded-xl p-3 flex flex-wrap items-center gap-3 text-white shrink-0">
+          <span className="text-xs text-stone-400 font-medium ml-1">地圖篩選：</span>
+          <div className="flex gap-1.5 flex-wrap">
+            {[
+              { value: 'all', label: '全部', color: 'bg-stone-800' },
+              { value: 'shelter', label: '避難所 🟢', color: 'hover:bg-emerald-900/30' },
+              { value: 'danger', label: '警戒點 🔴', color: 'hover:bg-rose-900/30' },
+              { value: 'pumping', label: '抽水站 🔵', color: 'hover:bg-cyan-900/30' },
+            ].map((filter) => (
+              <button
+                key={filter.value}
+                onClick={() => setFilterType(filter.value)}
+                className={`px-3 py-1 rounded-md text-xs font-medium border transition-all cursor-pointer ${
+                  filterType === filter.value
+                    ? 'bg-emerald-600 border-emerald-500 text-white'
+                    : `bg-stone-950 border-stone-800 text-stone-400 ${filter.color}`
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 地圖容器 - 設定手機版固定高度防止消失 */}
+        <div className="relative bg-stone-900 border border-stone-800 rounded-xl overflow-hidden shadow-lg h-[400px] md:h-[500px] lg:h-full lg:flex-1">
+          <div 
+            id="map" 
+            ref={mapRef} 
+            className="w-full h-full absolute inset-0 z-10" 
+            style={{ minHeight: '100%' }}
+          />
+        </div>
+      </div>
+
+      {/* 左側資訊與地標列表面板 (在手機版顯示在下方) */}
+      <div className="order-2 lg:order-1 lg:col-span-4 flex flex-col gap-4 overflow-hidden">
         
         {/* 1. 區域選擇器 */}
         <div className="bg-stone-900 border border-stone-800 rounded-xl p-5 shadow-sm text-white shrink-0">
@@ -134,13 +177,13 @@ export default function MapComponent({ selectedArea, onAreaSelect }: MapComponen
             ))}
           </div>
           <h2 className="text-xl font-bold text-emerald-400">{selectedArea.name}</h2>
-          <p className="text-stone-300 text-sm mt-2 leading-relaxed line-clamp-2">
+          <p className="text-stone-300 text-sm mt-2 leading-relaxed">
             {selectedArea.description}
           </p>
         </div>
 
-        {/* 2. 重點地標清單 (從地圖移至此處) */}
-        <div className="flex-1 min-h-0 bg-stone-900 border border-stone-800 rounded-xl flex flex-col overflow-hidden">
+        {/* 2. 重點地標清單 - 在手機版設定高度並可捲動 */}
+        <div className="bg-stone-900 border border-stone-800 rounded-xl flex flex-col overflow-hidden h-[350px] lg:flex-1 lg:h-auto">
           <div className="p-4 border-b border-stone-800 flex items-center justify-between">
             <div className="flex items-center gap-2 text-stone-200 font-semibold text-sm">
               <List className="w-4 h-4 text-rose-500" />
@@ -174,19 +217,13 @@ export default function MapComponent({ selectedArea, onAreaSelect }: MapComponen
                 <ChevronRight className="w-4 h-4 text-stone-600 ml-auto self-center shrink-0 group-hover:text-stone-400" />
               </button>
             ))}
-            {/* 若沒地標顯示 */}
-            {MARKERS.filter((m) => filterType === 'all' || m.type === filterType).length === 0 && (
-              <div className="p-10 text-center text-stone-500 text-xs italic">
-                此分類目前無地標顯示
-              </div>
-            )}
           </div>
         </div>
 
         {/* 3. 提示卡片 */}
         {showTips && (
           <div className="bg-emerald-950/30 border border-emerald-900/40 rounded-xl p-4 text-emerald-200 text-xs relative shrink-0">
-            <button onClick={() => setShowTips(false)} className="absolute top-2 right-2 text-emerald-700 hover:text-emerald-300">×</button>
+            <button onClick={() => setShowTips(false)} className="absolute top-2 right-2 text-emerald-700 hover:text-emerald-300 text-lg leading-none">×</button>
             <div className="flex gap-2">
               <Info className="w-4 h-4 shrink-0 text-emerald-500" />
               <div className="space-y-1">
@@ -198,39 +235,6 @@ export default function MapComponent({ selectedArea, onAreaSelect }: MapComponen
             </div>
           </div>
         )}
-      </div>
-
-      {/* 右側地圖主體 */}
-      <div className="col-span-1 lg:col-span-8 flex flex-col gap-3">
-        {/* 地標篩選欄 */}
-        <div className="bg-stone-900 border border-stone-800 rounded-xl p-3 flex flex-wrap items-center gap-3 text-white shrink-0">
-          <span className="text-xs text-stone-400 font-medium ml-1">地圖篩選：</span>
-          <div className="flex gap-1.5 flex-wrap">
-            {[
-              { value: 'all', label: '全部', color: 'bg-stone-800' },
-              { value: 'shelter', label: '避難所 🟢', color: 'hover:bg-emerald-900/30' },
-              { value: 'danger', label: '警戒點 🔴', color: 'hover:bg-rose-900/30' },
-              { value: 'pumping', label: '抽水站 🔵', color: 'hover:bg-cyan-900/30' },
-            ].map((filter) => (
-              <button
-                key={filter.value}
-                onClick={() => setFilterType(filter.value)}
-                className={`px-3 py-1 rounded-md text-xs font-medium border transition-all cursor-pointer ${
-                  filterType === filter.value
-                    ? 'bg-emerald-600 border-emerald-500 text-white'
-                    : `bg-stone-950 border-stone-800 text-stone-400 ${filter.color}`
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 地圖容器 - 現在這裡完全沒有浮動列表擋住了 */}
-        <div className="relative bg-stone-900 border border-stone-800 rounded-xl overflow-hidden shadow-lg flex-1">
-          <div id="map" ref={mapRef} className="w-full h-full absolute inset-0 z-10" />
-        </div>
       </div>
     </div>
   );
