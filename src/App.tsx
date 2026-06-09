@@ -117,6 +117,21 @@ export default function App() {
         
         {/* Dynamic Header Badge / News banner */}
         {activeTab === 'map' && (
+            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl
+            bg-gradient-to-r from-red-950/30 to-stone-900
+            border border-red-700/40 text-red-100">
+              
+              <div className="flex items-center gap-2.5">
+                <span className="p-1 px-2.5 rounded bg-red-600 font-mono text-[10px] uppercase font-bold text-white tracking-wider shrink-0 animate-pulse">
+                  降雨警戒
+                </span>
+
+                <p className="text-xs sm:text-sm font-sans text-stone-100">
+                  目前安南區受持續降雨影響，請民眾留意排水溝渠及周邊水位變化，做好防汛準備。
+                </p>
+              </div>
+            </div>
+          /*
           <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-emerald-950/30 to-stone-900 border border-emerald-900/40 text-emerald-200">
             <div className="flex items-center gap-2.5">
               <span className="p-1 px-2.5 rounded bg-emerald-600 font-mono text-[10px] uppercase font-bold text-white tracking-wider shrink-0 animate-pulse">
@@ -128,6 +143,7 @@ export default function App() {
             </div>
             
           </div>
+          */
         )}
 
         {/* Tab Router Switch */}
