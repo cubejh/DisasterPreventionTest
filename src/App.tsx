@@ -123,7 +123,7 @@ export default function App() {
                 水情通報
               </span>
               <p className="text-xs sm:text-sm font-sans text-stone-200">
-                目前台南市安南區氣候良好，排水設施與各抽水站皆處於安全水位。
+                目前安南區受持續降雨影響，請民眾留意排水溝渠及周邊水位變化，做好防汛準備。
               </p>
             </div>
             
