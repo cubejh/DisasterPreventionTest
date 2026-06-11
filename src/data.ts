@@ -46,14 +46,25 @@ export const MARKERS: MarkerInfo[] = [
   },
   {
     id: 'm2',
-    name: '曾文溪排水支線A點',
-    position: { lat: 23.057100, lng: 120.200500 },
-    type: 'danger',
-    description: '歷史易積水路段，主要由於渠道瞬時水位上升倒灌。建議強降雨時避開本路口。'
+    name: '總頭寮興安宮',
+    position: { lat: 23.054980, lng: 120.201999 },
+    type: 'shelter',
+    description: '可簡單避難的當地小廟，里長服務處與總頭社區活動中心也在附近。',
+    phone: '06-2460103',
+    capacity: '容納約 50 人'
+  },
+  {
+    id: 'm3',
+    name: '安順教堂',
+    position: { lat: 23.052889, lng: 120.202204 },
+    type: 'shelter',
+    description: '淹水不嚴重時，可以是簡單的短期避難收容處所，配有簡易資源。',
+    phone: '06-2560635',
+    capacity: '容納約 100 人'
   },
   
   {
-    id: 'm3',
+    id: 'm4',
     name: '布袋里活動中心',
     position: { lat: 23.06332, lng: 120.20707 },
     type: 'shelter',
@@ -62,7 +73,7 @@ export const MARKERS: MarkerInfo[] = [
     capacity: '容納約 220 人'
   },
   {
-    id: 'm4',
+    id: 'm5',
     name: '長溪路二段598巷(撤離主要路線)',
     position: { lat: 23.056655, lng: 120.203552 },
     type: 'general',
@@ -70,7 +81,7 @@ export const MARKERS: MarkerInfo[] = [
   },
 
   {
-    id: 'm5',
+    id: 'm6',
     name: '海佃國小避難所',
     position: { lat: 23.037148, lng: 120.198357 },
     type: 'shelter',
@@ -79,14 +90,14 @@ export const MARKERS: MarkerInfo[] = [
     capacity: '容納約 300 人'
   },
   {
-    id: 'm6',
+    id: 'm7',
     name: '六塊寮自動排水閘門與排水機組',
     position: { lat: 23.053387, lng: 120.209591 },
     type: 'pumping',
     description: '須確保閘門正常，並配備輔助抽水機組協助。'
   },
   {
-    id: 'm7',
+    id: 'm8',
     name: '長溪路二段(易積水路段)',
     position: { lat: 23.049309, lng: 120.203071 },
     type: 'danger',
