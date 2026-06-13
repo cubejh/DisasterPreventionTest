@@ -33,12 +33,16 @@ export default function Poster() {
             key={index}
             className="bg-white rounded-lg shadow-lg overflow-hidden"
           >
-            <img
-              src={item.img}
-              alt=""
-              className="w-full h-56 object-cover"
-            />
+            {/* 圖片：保留原比例，不裁切 */}
+            <div className="bg-gray-100 flex justify-center">
+              <img
+                src={item.img}
+                alt=""
+                className="w-full h-auto object-contain"
+              />
+            </div>
 
+            {/* 文字區 */}
             <div className="p-4 space-y-2">
               <h2 className="text-lg font-bold">
                 {item.title}
