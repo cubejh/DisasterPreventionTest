@@ -6,17 +6,14 @@ export default function Poster() {
   const posters = [
     {
       img: poster1,
-      title: '標題',
       content: '內文'
     },
     {
       img: poster2,
-      title: '標題',
       content: '內文'
     },
     {
       img: poster3,
-      title: '標題',
       content: '內文'
     }
   ];
@@ -44,10 +41,6 @@ export default function Poster() {
 
             {/* 文字區 */}
             <div className="p-4 space-y-2">
-              <h2 className="text-lg font-bold">
-                {item.title}
-              </h2>
-
               <p className="text-sm text-gray-600 leading-relaxed">
                 {item.content}
               </p>
