@@ -4,10 +4,18 @@ import { AreaInfo } from './types';
 import MapComponent from './components/MapComponent';
 import MyTimeline from './components/MyTimeline';
 import { AboutPage, ContactPage } from './components/Pages';
+import Poster from './components/Poster';
 import { Shield, Sparkles, Map, BookOpen, FileText, Send, Menu, X, CheckSquare } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'map' | 'timeline' | 'about' | 'contact'>('map');
+  const [activeTab, setActiveTab] =
+  useState<
+    'map'
+    | 'timeline'
+    | 'about'
+    | 'contact'
+    | 'poster'
+  >('map');
   const [selectedArea, setSelectedArea] = useState<AreaInfo>(AREAS[0]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -47,6 +55,7 @@ export default function App() {
             {[
               { id: 'map', label: '首頁 / 避難地圖', icon: Map },
               { id: 'timeline', label: '學習防汛時程軸 (My Timeline)', icon: BookOpen },
+              { id: 'poster', label: '防災海報', icon: CheckSquare },
               { id: 'about', label: '關於我們', icon: FileText },
               { id: 'contact', label: '聯絡與災情通報', icon: Send },
             ].map((tab) => {
@@ -86,6 +95,7 @@ export default function App() {
             {[
               { id: 'map', label: '首頁 / 避難地圖', icon: Map },
               { id: 'timeline', label: '學習時程軸 (My Timeline)', icon: BookOpen },
+              { id: 'poster', label: '防災海報', icon: CheckSquare },
               { id: 'about', label: '關於我們', icon: FileText },
               { id: 'contact', label: '聯絡與災情通報', icon: Send },
             ].map((tab) => {
@@ -168,7 +178,7 @@ export default function App() {
           {activeTab === 'timeline' && <MyTimeline />}
 
           {activeTab === 'about' && <AboutPage />}
-
+          {activeTab === 'poster' && <Poster />}
           {activeTab === 'contact' && <ContactPage />}
         </div>
 
